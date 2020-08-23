@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html class="h-100">
+
+<head>
+	<title>Vanilla HTML Test</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		div {
+			padding: 10px;
+			margin: 10px;
+		}
+	</style>
+	<script src="clickout-event.js"></script>
+</head>
+
+<body class="h-100">
+	<div style="background:blue;" onclickout="set(this)">&nbsp;</div>
+	<div style="background:red;" onmousedownout="set(this)">&nbsp;</div>
+	<div style="background:yellow;" onmouseupout="set(this)">&nbsp;</div>
+	<script>
+		function set(el) {
+			el.innerText = event.type;
+			setTimeout(() => el.innerHTML = "&nbsp;", 500);
+		}
+	</script>
+</body>
+
+</html>

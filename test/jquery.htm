@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html class="h-100">
+
+<head>
+	<title>jQuery Test</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		div {
+			padding: 10px;
+			margin: 10px;
+		}
+	</style>
+	<script src="https://unpkg.com/jquery@3.5.1/dist/jquery.js"></script>
+	<script src="clickout-event.js"></script>
+</head>
+
+<body class="h-100">
+	<div style="background:blue;" id="b">&nbsp;</div>
+	<div style="background:red;" id="r">&nbsp;</div>
+	<div style="background:yellow;" id="y">&nbsp;</div>
+	<script>
+		$("#b").on("clickout", set);
+		$("#r").on("mousedownout", set);
+		$("#y").on("mouseupout", set);
+		function set(event) {
+			this.innerText = event.type;
+			setTimeout(() => this.innerHTML = "&nbsp;", 500);
+		}
+	</script>
+</body>
+
+</html>

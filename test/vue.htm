@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="h-100">
+
+<head>
+	<title>Vue.js Test</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		div:not(#app) {
+			padding: 10px;
+			margin: 10px;
+		}
+	</style>
+	<script src="clickout-event.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body class="h-100">
+	<div id="app">
+		<div style="background:blue;" v-on:clickout='set'>&nbsp;</div>
+		<div style="background:red;" v-on:mousedownout='set'>&nbsp;</div>
+		<div style="background:yellow;" v-on:mouseupout='set'>&nbsp;</div>
+	</div>
+	<script>
+		var app = new Vue({
+			el: "#app",
+			methods: {
+				set() {
+					let el = event.target;
+					el.innerText = event.type;
+					setTimeout(() => el.innerHTML = "&nbsp;", 500);
+				}
+			}
+		});
+	</script>
+</body>
+
+</html>
