@@ -2,7 +2,7 @@
 
 > Provides universal support for `clickout` and other similar events to webpages.
 
-[![npm version](https://img.shields.io/npm/v/click-event.svg?logo=npm)](https://www.npmjs.com/package/clickout-event)
+[![npm version](https://img.shields.io/npm/v/clickout-event.svg?logo=npm)](https://www.npmjs.com/package/clickout-event)
 ![npm downloads](https://img.shields.io/npm/dt/clickout-event?logo=npm)
 [![GitHub package version](https://img.shields.io/github/package-json/v/MuTsunTsai/clickout-event.svg?logo=github&label=Github)](https://github.com/MuTsunTsai/clickout-event)
 ![license](https://img.shields.io/npm/l/clickout-event.svg)
@@ -75,6 +75,12 @@ $('#myId').on('clickout', myListener);
 
 ```html
 <div v-on:clickout="open=false">...</div>
+```
+
+### Angular
+
+```html
+<div (clickout)="close()">...</div>
 ```
 
 ### Event propagation

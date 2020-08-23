@@ -55,4 +55,6 @@ new MutationObserver((list: MutationRecord[]) => {
 	subtree: true
 });
 
+// Process contents before the current script tag, if any.
+
 checkRecursive(document_.body);
