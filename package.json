@@ -1,6 +1,6 @@
 {
 	"name": "clickout-event",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Provides universal support for `clickout` and other similar events to webpages.",
 	"main": "dist/clickout-event.js",
 	"scripts": {
