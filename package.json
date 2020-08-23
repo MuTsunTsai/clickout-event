@@ -1,10 +1,10 @@
 {
   "name": "clickout-event",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Creates `clickout` event in JavaScript.",
   "main": "dist/clickout-event.js",
   "scripts": {
-	"version": "gulp build && git add -A",
+    "version": "gulp build && git add -A",
     "test": "echo \"Error: no test specified\""
   },
   "keywords": [
