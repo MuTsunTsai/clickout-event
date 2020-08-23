@@ -4,7 +4,8 @@
   "description": "Creates `clickout` event in JavaScript.",
   "main": "dist/clickout-event.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+	"version": "gulp build && git add -A",
+    "test": "echo \"Error: no test specified\""
   },
   "keywords": [
     "clickout",

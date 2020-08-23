@@ -11,10 +11,10 @@
 There are many packages that are designed to capture and handle the
 "click outside" event of an element. Some of them target vanilla JavaScript,
 while some others target specific front-end framework, possibly specific version.
-Front-end designers in the past had to search for the right package that works
+Front-end designers in the past had to look for the right package that works
 for their particular scenario.
 
-Look no further! Introducing Clickout-Evnet,
+Look no further! Introducing Clickout-Event,
 a package that provides universal support for `clickout` and other similar events.
 It works in all scenarios: plain HTML `onclickout` attributes,
 `.addEventListener('clickout')` of vanilla JavaScript,
@@ -80,8 +80,9 @@ $('#myId').on('clickout', myListener);
 ### Event propagation
 
 You can have nested elements using the out-events. In that case,
-unlike regular events, out-events fire in the top-down orderin;
-that is, the parent element will fire first, and then the child elements will fire.
+unlike regular events, out-events fire in the top-down ordering;
+that is, the parent element will fire the event first,
+and then will the child elements.
 Similarly, when calling `event.stopPropagation()`
 (or, for example, using `v-on:clickout.stop` in Vue.js),
 it will be the parent element stopping the child element from firing the event.
