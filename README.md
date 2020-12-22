@@ -47,6 +47,12 @@ Then all you need to do is add the script tag anywhere (as long as it is before 
 <script src="clickout-event.js"></script>
 ```
 
+If you use webpack/vue/react, you'll need to `require()` the module for things to work.
+
+```
+require('clickout-event')
+```
+
 And watch the magic happen.
 
 ## API
