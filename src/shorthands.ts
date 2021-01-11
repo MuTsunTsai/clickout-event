@@ -4,28 +4,39 @@
 
 const on_ = 'on';
 const out_ = 'out';
+const body_ = 'body';
+const stop_ = 'stop';
+const click_ = 'click';
+const apply_ = 'apply';
 const target_ = 'target';
-const stopList_ = 'stopList';
-const dataset = 'dataset';
-const addEventListener_ = "addEventListener";
-const setAttribute_ = "setAttribute";
+const dataset_ = 'dataset';
 const prototype_ = "prototype";
+const Propagation_ = 'Propagation';
+const setAttribute_ = "setAttribute";
+const relatedTarget_ = 'relatedTarget';
+const addEventListener_ = "addEventListener";
+
 const outSymbol = Symbol(out_);
 
 const Object_ = Object;
 const document_ = document;
-const MouseEvent_ = MouseEvent;
+const TouchEvent_ = TouchEvent;
 const HTMLElement_ = HTMLElement;
 const HTMLElementPrototype = HTMLElement_[prototype_];
 const EventPrototype = Event[prototype_];
 
 interface HTMLElement extends GlobalOutEventHandlers {
+	/** An object containing the actual inline event listeners. */
 	[outSymbol]: GlobalOutEventHandlers;
 }
 
-const events: ReadonlyArray<TargetEvents> = ['click', 'dblclick', 'mousedown', 'mouseup', 'touchstart', 'touchend'];
+const events: ReadonlyArray<TargetEvents> = [
+	click_, 'dbl' + click_ as 'dblclick',
+	'mousedown', 'mouseup',
+	'touchstart', 'touchend',
+	'pointerdown', 'pointerup'
+];
 const targetEvents: ReadonlySet<TargetEvents> = new Set(events);
-const targetOutEvents: ReadonlySet<string> = new Set(events.map(e => e + out_));
 const targetOnOutEvents: ReadonlySet<TargetOnOutEvents> = new Set(events.map(e => on_ + e + out_ as TargetOnOutEvents));
 
 const is = <T>(a: any, b: new (...args: any) => T): a is T => a instanceof b;

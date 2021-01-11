@@ -18,10 +18,12 @@
 	<div style="background:blue;" id="b">&nbsp;</div>
 	<div style="background:red;" id="r">&nbsp;</div>
 	<div style="background:yellow;" id="y">&nbsp;</div>
+	<div style="background:green;" id="g">&nbsp;</div>
 	<script>
 		document.getElementById("b").addEventListener("clickout", set);
 		document.getElementById("r").addEventListener("mousedownout", set);
 		document.getElementById("y").addEventListener("mouseupout", set);
+		document.getElementById("g").addEventListener("pointerupout", set);
 		function set() {
 			this.innerText = event.type;
 			setTimeout(() => this.innerHTML = "&nbsp;", 500);

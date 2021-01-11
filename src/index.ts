@@ -8,9 +8,16 @@ let outList: HTMLElement[] = [];
 
 let sortNeeded = false;
 
+/**
+ * Create a virtual element for parsing inline event attribute.
+ * It really doesn't matter what type of element we use here;
+ * we use body just for reusing keyword.
+ */
+let virtual = document_.createElement(body_);
+
 each(targetEvents, event => {
 	// Add top-level event listener.
-	document_[addEventListener_](event, processOut as EventListener);
+	document_[addEventListener_](event, processOut as EventListener, { passive: true });
 
 	// Create out-event attributes.
 	let oneout = on_ + event + out_ as TargetOnOutEvents;
@@ -25,22 +32,26 @@ each(targetEvents, event => {
 });
 
 // Patch prototypes.
-
 patch(HTMLElementPrototype, addEventListener_, ael => function(this: HTMLElement, ...args: any) {
-	if(targetOutEvents.has(args[0])) addElement(this);
-	ael.apply(this, args);
+	if(targetOnOutEvents.has(on_ + args[0] as any)) addElement(this);
+	ael[apply_](this, args);
 });
-patch(HTMLElementPrototype, setAttribute_, sa => function(this: HTMLElement, ...args: any) {
-	if(targetOnOutEvents.has(args[0])) {
-		this[args[0] as TargetOnOutEvents] = new Function(args[1]) as EventListener;
+patch(HTMLElementPrototype, setAttribute_, sa => function(this: HTMLElement, qualifiedName: string, value: string) {
+	if(targetOnOutEvents.has(qualifiedName as any)) {
+		// Parse the attribute using native mechanism,
+		// in order to achieve consistent behavior regarding content-security-policy.
+		// It doesn't really matter which event we use here;
+		// we use onclick just for reusing keyword.
+		sa[apply_](virtual, [on_ + click_, value]);
+		this[qualifiedName as TargetOnOutEvents] = virtual[on_ + click_ as "onclick"] as EventListener;
+	} else {
+		sa[apply_](this, [qualifiedName, value]);
 	}
-	else sa.apply(this, args);
 });
-patch(EventPrototype, "stopPropagation", eventPatchFactory);
-patch(EventPrototype, "stopImmediatePropagation", eventPatchFactory);
+patch(EventPrototype, stop_ + Propagation_ as any, eventPatchFactory);
+patch(EventPrototype, stop_ + "Immediate" + Propagation_ as any, eventPatchFactory);
 
 // Observe mutation of the entire document.
-
 new MutationObserver((list: MutationRecord[]) => {
 	each(list, record => {
 		each(record.addedNodes, checkRecursive);
@@ -56,5 +67,4 @@ new MutationObserver((list: MutationRecord[]) => {
 });
 
 // Process contents before the current script tag, if any.
-
-checkRecursive(document_.body);
+checkRecursive(document_[body_]);

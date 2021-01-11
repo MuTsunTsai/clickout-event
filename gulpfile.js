@@ -6,12 +6,13 @@ let terser = require('gulp-terser');
 let pkg = require('./package.json');
 let header = `/**
  * ${pkg.name} v${pkg.version}
- * (c) ${new Date().getFullYear()} Mu-Tsun Tsai
+ * (c) 2020-${new Date().getFullYear()} Mu-Tsun Tsai
  * Released under the MIT License.
  */`;
 
 let terserOption = {
 	"compress": {
+		"evaluate": false,
 		"properties": false,
 		"unsafe_arrows": true
 	},

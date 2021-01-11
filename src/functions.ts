@@ -3,11 +3,16 @@
 const checkRecursive = (el: Node) => {
 	if(is(el, HTMLElement_)) {
 		if(el[outSymbol]) {
-			addElement(el); // reattach
+			// Reattachment of an OutElement.
+			addElement(el);
 		} else {
+			// Check if there is any inline attributes.
 			each(targetEvents, e => {
 				let oneout = on_ + e + out_ as TargetOnOutEvents;
 				let attr = el.getAttribute(oneout);
+
+				// Inline attribute translates to oneventout handlers only if the latter is not set,
+				// according to the native browser behaviors.
 				if(attr && !manager(el)[oneout]) el[setAttribute_](oneout, attr);
 			});
 		}
@@ -30,37 +35,37 @@ const elementSort = (e1: Node, e2: Node) => {
 	return 0;
 };
 
-const processOut = (event: MouseEvent | TouchEvent) => {
+const processOut = (event: TouchEvent | PointerEvent) => {
 	if(sortNeeded) {
 		outList.sort(elementSort);
 		sortNeeded = false;
 	}
 	let target = event[target_] as Node;
 
-	if(is(event, MouseEvent_)) {
-		event = new MouseEvent_(event.type + out_,
-			Object_.assign({}, event, {
-				relatedTarget: target
-			})
-		);
+	// TouchEvent does not have 'relatedTarget' property and have to be handled separately.
+	if(is(event, TouchEvent_)) {
+		event = new TouchEvent_(event.type + out_, event as any);
+		event[relatedTarget_] = target;
 	} else {
-		event = new TouchEvent(event.type + out_, event as any);
+		event = new (event.constructor as new (...args: any) => PointerEvent)(event.type + out_,
+			Object_.assign({}, event, { [relatedTarget_]: target })
+		);
 	}
-	event[stopList_] = [];
+	event[stop_] = [];
 
 	// Loops from top-down
 	each(outList, el => {
-		if(!contains(el, target) && !event[stopList_].some(c => contains(c, el))) {
+		if(!contains(el, target) && !event[stop_].some(c => contains(c, el))) {
 			el.dispatchEvent(event);
 		}
 	});
 };
 
-const eventPatchFactory = (func: Function) => function(this: MouseEvent | TouchEvent) {
+const eventPatchFactory = (func: Function) => function(this: TouchEvent | PointerEvent) {
 	let ev = this, type = ev.type as TargetEvents;
-	func.apply(ev);
+	func[apply_](ev);
 	if(targetEvents.has(type)) processOut(ev);
-	if(targetOutEvents.has(type)) ev[stopList_].push(ev[target_] as HTMLElement);
+	if(targetOnOutEvents.has(on_ + type as any)) ev[stop_].push(ev[target_] as HTMLElement);
 };
 
 const patch = <T, K extends keyof T>(proto: T, method: K, factory: (org: T[K]) => T[K]) =>
@@ -68,5 +73,5 @@ const patch = <T, K extends keyof T>(proto: T, method: K, factory: (org: T[K]) =
 
 function attributeListener(this: HTMLElement, event: Event) {
 	let listener = this[outSymbol][on_ + event.type as TargetOnOutEvents];
-	if(listener) listener.apply(this, [event]);
+	if(listener) listener[apply_](this, [event]);
 };

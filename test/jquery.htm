@@ -19,10 +19,12 @@
 	<div style="background:blue;" id="b">&nbsp;</div>
 	<div style="background:red;" id="r">&nbsp;</div>
 	<div style="background:yellow;" id="y">&nbsp;</div>
+	<div style="background:green;" id="g">&nbsp;</div>
 	<script>
 		$("#b").on("clickout", set);
 		$("#r").on("mousedownout", set);
 		$("#y").on("mouseupout", set);
+		$("#g").on("pointerupout", set);
 		function set(event) {
 			this.innerText = event.type;
 			setTimeout(() => this.innerHTML = "&nbsp;", 500);

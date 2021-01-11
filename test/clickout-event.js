@@ -1,22 +1,32 @@
 "use strict";
 const on_ = 'on';
 const out_ = 'out';
+const body_ = 'body';
+const stop_ = 'stop';
+const click_ = 'click';
+const apply_ = 'apply';
 const target_ = 'target';
-const stopList_ = 'stopList';
-const dataset = 'dataset';
-const addEventListener_ = "addEventListener";
-const setAttribute_ = "setAttribute";
+const dataset_ = 'dataset';
 const prototype_ = "prototype";
+const Propagation_ = 'Propagation';
+const setAttribute_ = "setAttribute";
+const relatedTarget_ = 'relatedTarget';
+const addEventListener_ = "addEventListener";
 const outSymbol = Symbol(out_);
 const Object_ = Object;
 const document_ = document;
-const MouseEvent_ = MouseEvent;
+const TouchEvent_ = TouchEvent;
 const HTMLElement_ = HTMLElement;
 const HTMLElementPrototype = HTMLElement_[prototype_];
 const EventPrototype = Event[prototype_];
-const events = ['click', 'dblclick', 'mousedown', 'mouseup', 'touchstart', 'touchend'];
+const events = [
+    click_,
+    'dbl' + click_,
+    'mousedown', 'mouseup',
+    'touchstart', 'touchend',
+    'pointerdown', 'pointerup'
+];
 const targetEvents = new Set(events);
-const targetOutEvents = new Set(events.map(e => e + out_));
 const targetOnOutEvents = new Set(events.map(e => on_ + e + out_));
 const is = (a, b) => a instanceof b;
 const contains = (a, b) => a.contains(b);
@@ -61,40 +71,40 @@ const processOut = (event) => {
         sortNeeded = false;
     }
     let target = event[target_];
-    if (is(event, MouseEvent_)) {
-        event = new MouseEvent_(event.type + out_, Object_.assign({}, event, {
-            relatedTarget: target
-        }));
+    if (is(event, TouchEvent_)) {
+        event = new TouchEvent_(event.type + out_, event);
+        event[relatedTarget_] = target;
     }
     else {
-        event = new TouchEvent(event.type + out_, event);
+        event = new event.constructor(event.type + out_, Object_.assign({}, event, { [relatedTarget_]: target }));
     }
-    event[stopList_] = [];
+    event[stop_] = [];
     each(outList, el => {
-        if (!contains(el, target) && !event[stopList_].some(c => contains(c, el))) {
+        if (!contains(el, target) && !event[stop_].some(c => contains(c, el))) {
             el.dispatchEvent(event);
         }
     });
 };
 const eventPatchFactory = (func) => function () {
     let ev = this, type = ev.type;
-    func.apply(ev);
+    func[apply_](ev);
     if (targetEvents.has(type))
         processOut(ev);
-    if (targetOutEvents.has(type))
-        ev[stopList_].push(ev[target_]);
+    if (targetOnOutEvents.has(on_ + type))
+        ev[stop_].push(ev[target_]);
 };
 const patch = (proto, method, factory) => proto[method] = factory(proto[method]);
 function attributeListener(event) {
     let listener = this[outSymbol][on_ + event.type];
     if (listener)
-        listener.apply(this, [event]);
+        listener[apply_](this, [event]);
 }
 ;
 let outList = [];
 let sortNeeded = false;
+let virtual = document_.createElement(body_);
 each(targetEvents, event => {
-    document_[addEventListener_](event, processOut);
+    document_[addEventListener_](event, processOut, { passive: true });
     let oneout = on_ + event + out_;
     Object_.defineProperty(HTMLElementPrototype, oneout, {
         get() { return this[outSymbol][oneout]; },
@@ -105,19 +115,21 @@ each(targetEvents, event => {
     });
 });
 patch(HTMLElementPrototype, addEventListener_, ael => function (...args) {
-    if (targetOutEvents.has(args[0]))
+    if (targetOnOutEvents.has(on_ + args[0]))
         addElement(this);
-    ael.apply(this, args);
+    ael[apply_](this, args);
 });
-patch(HTMLElementPrototype, setAttribute_, sa => function (...args) {
-    if (targetOnOutEvents.has(args[0])) {
-        this[args[0]] = new Function(args[1]);
+patch(HTMLElementPrototype, setAttribute_, sa => function (qualifiedName, value) {
+    if (targetOnOutEvents.has(qualifiedName)) {
+        sa[apply_](virtual, [on_ + click_, value]);
+        this[qualifiedName] = virtual[on_ + click_];
     }
-    else
-        sa.apply(this, args);
+    else {
+        sa[apply_](this, [qualifiedName, value]);
+    }
 });
-patch(EventPrototype, "stopPropagation", eventPatchFactory);
-patch(EventPrototype, "stopImmediatePropagation", eventPatchFactory);
+patch(EventPrototype, stop_ + Propagation_, eventPatchFactory);
+patch(EventPrototype, stop_ + "Immediate" + Propagation_, eventPatchFactory);
 new MutationObserver((list) => {
     each(list, record => {
         each(record.addedNodes, checkRecursive);
@@ -131,4 +143,4 @@ new MutationObserver((list) => {
     childList: true,
     subtree: true
 });
-checkRecursive(document_.body);
+checkRecursive(document_[body_]);

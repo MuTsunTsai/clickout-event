@@ -1,6 +1,6 @@
 # Clickout-Event
 
-> Provides universal support for `clickout` and other similar events to webpages.
+> Provides universal support for `clickout` and other similar events to any front-end frameworks.
 
 [![npm version](https://img.shields.io/npm/v/clickout-event.svg?logo=npm)](https://www.npmjs.com/package/clickout-event)
 ![npm downloads](https://img.shields.io/npm/dt/clickout-event?logo=npm)
@@ -47,19 +47,25 @@ Then all you need to do is add the script tag anywhere (as long as it is before 
 <script src="clickout-event.js"></script>
 ```
 
-If you use webpack/vue/react, you'll need to `require()` the module for things to work.
+If you use webpack, you'll need to `require()` the module for things to work.
 
-```
-require('clickout-event')
+```js
+require('clickout-event');
 ```
 
 And watch the magic happen.
 
 ## API
 
-Clickout-Event provides the corresponding "out-events" for the following events: `click`, `dblclick`, `mousedown`, `mouseup`, `touchstart` and `touchend`. The corresponding events are then called `clickout`, `dblclickout` etc. You can then use them the same way you use any other events, such as:
+Clickout-Event provides the corresponding "out-events" for the following events: `click`, `dblclick`, `mousedown`, `mouseup`, `touchstart`, `touchend`, `pointerdown` and `pointerup`. The corresponding events are then called `clickout`, `dblclickout` etc. You can then use them the same way you use any other events; see examples below.
 
-### HTML attribute
+Note that pointer events is not supported in Safari.
+
+With each out-event, you can use `event.relatedTarget` to find out exactly which element fires the original event (that is, the element being clicked etc.).
+
+## Usage
+
+### HTML inline attribute
 
 ```html
 <div onclickout="console.log('clickout detected')">...</div>
@@ -71,23 +77,34 @@ Clickout-Event provides the corresponding "out-events" for the following events:
 document.getElementById('myId').addEventListener('clickout', myListener);
 ```
 
-### jQuery
+### [jQuery](https://jquery.com/)
 
 ```js
 $('#myId').on('clickout', myListener);
 ```
 
-### Vue.js
+### [Vue.js](https://vuejs.org/)
 
 ```html
 <div v-on:clickout="open=false">...</div>
 ```
 
-### Angular
+### [Angular](https://angular.io/)
 
 ```html
 <div (clickout)="close()">...</div>
 ```
+
+### Other frameworks
+
+Some frameworks (such as [React](https://reactjs.org/) and [Blazor](https://blazor.net/))
+have a fixed list of events that are supported by their event attribute syntax,
+so you cannot directly use their event attributes with out-events
+(or with any custom events for that matter) in their templates.
+Still, you can create custom components in these frameworks and use the vanilla
+`addEventListener()` method to register event listener.
+
+## Details
 
 ### Event propagation
 
@@ -96,12 +113,29 @@ unlike regular events, out-events fire in the top-down ordering;
 that is, the parent element will fire the event first,
 and then will the child elements.
 Similarly, when calling `event.stopPropagation()`
-(or, for example, using `v-on:clickout.stop` in Vue.js),
+(or, for example, using `v-on:clickout.stop` in Vue.js) on the out-events,
 it will be the parent element stopping the child element from firing the event.
+
+By design, even if the propagation of the original event is stopped,
+the corresponding out-event will still fire regardlessly.
 
 ### Dynamic elements
 
 Feel free to add or remove elements dynamically!
 Clickout-Event monitors changes to the document,
-and will ensure the out-events works no matter which dynamic
+and will ensure the out-events work no matter which dynamic
 front-end framework you're using.
+
+### Content Security Policy (CSP)
+
+When using inline event attributes,
+Clickout-Event is subject to the same CSP restriction as any other events;
+that is, `'unsafe-inline'` must be allowed. Now Clickout-Event uses
+native mechanisms instead of eval-like methods to parse the attribute,
+so you don't need to allow `'unsafe-eval'`.
+
+### Caveat
+
+Since out-events are synthetic events,
+they are untrusted (that is, `event.isTrusted == false`) by nature,
+and your event listener is not supposed to reject the event because of this.

@@ -1,17 +1,21 @@
 
 type TargetMouseEvents = 'click' | 'dblclick' | 'mousedown' | 'mouseup';
 type TargetTouchEvents = 'touchstart' | 'touchend';
-type TargetEvents = TargetMouseEvents | TargetTouchEvents;
+type TargetPointerEvents = 'pointerdown' | 'pointerup';
+type TargetEvents = TargetMouseEvents | TargetTouchEvents | TargetPointerEvents;
 
 type TargetOnMouseOutEvents = 'onclickout' | 'ondblclickout' | 'onmousedownout' | 'onmouseupout';
 type TargetOnTouchOutEvents = 'ontouchstartout' | 'ontouchendout';
-type TargetOnOutEvents = TargetOnMouseOutEvents | TargetOnTouchOutEvents;
+type TargetOnPointerOutEvents = 'onpointerdownout' | 'onpointerupout';
+type TargetOnOutEvents = TargetOnMouseOutEvents | TargetOnTouchOutEvents | TargetOnPointerOutEvents;
 
 type GlobalOutEventHandlers = { [e in TargetOnOutEvents]: EventListener };
 
 interface OutEvent {
-	stopList: HTMLElement[];
+	stop: HTMLElement[];
 }
 
 interface MouseEvent extends OutEvent { }
-interface TouchEvent extends OutEvent { }
+interface TouchEvent extends OutEvent {
+	relatedTarget: EventTarget;
+}
