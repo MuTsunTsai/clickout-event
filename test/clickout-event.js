@@ -15,7 +15,7 @@ const addEventListener_ = "addEventListener";
 const outSymbol = Symbol(out_);
 const Object_ = Object;
 const document_ = document;
-const TouchEvent_ = TouchEvent;
+const TouchEvent_ = (typeof (TouchEvent) != "undefined" ? TouchEvent : undefined);
 const HTMLElement_ = HTMLElement;
 const HTMLElementPrototype = HTMLElement_[prototype_];
 const EventPrototype = Event[prototype_];
@@ -28,7 +28,7 @@ const events = [
 ];
 const targetEvents = new Set(events);
 const targetOnOutEvents = new Set(events.map(e => on_ + e + out_));
-const is = (a, b) => a instanceof b;
+const is = (a, b) => !!b && (a instanceof b);
 const contains = (a, b) => a.contains(b);
 const each = (list, action) => {
     for (let item of list)

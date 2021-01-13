@@ -20,7 +20,7 @@ const outSymbol = Symbol(out_);
 
 const Object_ = Object;
 const document_ = document;
-const TouchEvent_ = TouchEvent;
+const TouchEvent_: typeof TouchEvent = (typeof (TouchEvent) != "undefined" ? TouchEvent : undefined) as any;
 const HTMLElement_ = HTMLElement;
 const HTMLElementPrototype = HTMLElement_[prototype_];
 const EventPrototype = Event[prototype_];
@@ -39,7 +39,7 @@ const events: ReadonlyArray<TargetEvents> = [
 const targetEvents: ReadonlySet<TargetEvents> = new Set(events);
 const targetOnOutEvents: ReadonlySet<TargetOnOutEvents> = new Set(events.map(e => on_ + e + out_ as TargetOnOutEvents));
 
-const is = <T>(a: any, b: new (...args: any) => T): a is T => a instanceof b;
+const is = <T>(a: any, b: new (...args: any) => T): a is T => !!b && (a instanceof b);
 const contains = (a: Node, b: Node) => a.contains(b);
 const each = <T>(list: Iterable<T>, action: (item: T) => void) => {
 	for(let item of list) action(item);
