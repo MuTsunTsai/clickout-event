@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Vanilla HTML Test</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		div {
+			padding: 10px;
+			margin: 10px;
+		}
+	</style>
+	<script src="clickout-event.js"></script>
+</head>
+
+<body onclick="console.log('click')">
+	<div style="background:blue;" onclickout="event.stopPropagation(); msg('white')">
+		<div style="background:red;" onclickout="msg('blue')">
+			<div style="background:yellow;" onclickout="msg('red')">&nbsp;</div>	
+		</div>
+	</div>
+
+	<div id="msg"></div>
+	<script>
+		function msg(msg) {
+			let el = document.getElementById("msg");
+			console.log(event.eventPhase)
+			el.innerText = msg;
+			setTimeout(() => el.innerHTML = "&nbsp;", 500);
+		}
+	</script>
+</body>
+
+</html>

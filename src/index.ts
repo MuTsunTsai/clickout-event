@@ -17,37 +17,52 @@ let virtual = document_.createElement(body_);
 
 each(targetEvents, event => {
 	// Add top-level event listener.
-	document_[addEventListener_](event, processOut as EventListener, { passive: true });
+	document_[addEventListener_](event, processOut as EventListener, {
+		passive: true,
+		/**
+		 * Use capture here, so that this listener runs before almost every other event listeners,
+		 * in order to prevent it from being blocked by event.stopPropagation().
+		 * In the very unlikely event of the user define another capturing handler before this particular one,
+		 * and at the same time stops propagation,
+		 * I'm sure the user knows what is intended and therefore will not attempt to override the intention.
+		 */
+		capture: true
+	});
 
 	// Create out-event attributes.
-	let oneout = on_ + event + out_ as TargetOnOutEvents;
-	Object_.defineProperty(HTMLElementPrototype, oneout, {
-		get(this: HTMLElement) { return this[outSymbol][oneout]; },
+	let onEventOut = on_ + event + out_ as TargetOnOutEvents;
+	Object_.defineProperty(HTMLElementPrototype, onEventOut, {
+		get(this: HTMLElement) { return this[outSymbol][onEventOut]; },
 		set(this: HTMLElement, value: EventListenerOrEventListenerObject) {
 			// Registering duplicate listener has no effect.
 			this[addEventListener_](event + out_, attributeListener);
-			this[outSymbol][oneout] = typeof value == "object" ? value.handleEvent : value;
+			this[outSymbol][onEventOut] = typeof value == "object" ? value.handleEvent : value;
 		}
 	});
 });
 
 // Patch prototypes.
-patch(HTMLElementPrototype, addEventListener_, ael => function(this: HTMLElement, ...args: any) {
-	if(targetOnOutEvents.has(on_ + args[0] as any)) addElement(this);
-	ael[apply_](this, args);
-});
-patch(HTMLElementPrototype, setAttribute_, sa => function(this: HTMLElement, qualifiedName: string, value: string) {
-	if(targetOnOutEvents.has(qualifiedName as any)) {
-		// Parse the attribute using native mechanism,
-		// in order to achieve consistent behavior regarding content-security-policy.
-		// It doesn't really matter which event we use here;
-		// we use onclick just for reusing keyword.
-		sa[apply_](virtual, [on_ + click_, value]);
-		this[qualifiedName as TargetOnOutEvents] = virtual[on_ + click_ as "onclick"] as EventListener;
-	} else {
-		sa[apply_](this, [qualifiedName, value]);
+patch(HTMLElementPrototype, addEventListener_,
+	// function keyword must be used here since we need the 'this' keyword.
+	ael => function(this: HTMLElement, ...args: any) {
+		if(targetOnOutEvents.has(on_ + args[0] as any)) addElement(this);
+		ael[apply_](this, args);
 	}
-});
+);
+patch(HTMLElementPrototype, setAttribute_,
+	sa => function(this: HTMLElement, qualifiedName: string, value: string) {
+		if(targetOnOutEvents.has(qualifiedName as any)) {
+			// Parse the attribute using native mechanism,
+			// in order to achieve consistent behavior regarding content-security-policy.
+			// It doesn't really matter which event we use here;
+			// we use onclick just for reusing keyword.
+			sa[apply_](virtual, [on_ + click_, value]);
+			this[qualifiedName as TargetOnOutEvents] = virtual[on_ + click_ as "onclick"] as EventListener;
+		} else {
+			sa[apply_](this, [qualifiedName, value]);
+		}
+	}
+);
 patch(EventPrototype, stop_ + Propagation_ as any, eventPatchFactory);
 patch(EventPrototype, stop_ + "Immediate" + Propagation_ as any, eventPatchFactory);
 

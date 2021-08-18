@@ -8,12 +8,12 @@ const checkRecursive = (el: Node) => {
 		} else {
 			// Check if there is any inline attributes.
 			each(targetEvents, e => {
-				let oneout = on_ + e + out_ as TargetOnOutEvents;
-				let attr = el.getAttribute(oneout);
+				let onEventOut = on_ + e + out_ as TargetOnOutEvents;
+				let attr = el.getAttribute(onEventOut);
 
-				// Inline attribute translates to oneventout handlers only if the latter is not set,
+				// Inline attribute translates to onEventOut handlers only if the latter is not set,
 				// according to the native browser behaviors.
-				if(attr && !manager(el)[oneout]) el[setAttribute_](oneout, attr);
+				if(attr && !manager(el)[onEventOut]) el[setAttribute_](onEventOut, attr);
 			});
 		}
 		each(el.childNodes, checkRecursive);
@@ -64,7 +64,6 @@ const processOut = (event: TouchEvent | PointerEvent) => {
 const eventPatchFactory = (func: Function) => function(this: TouchEvent | PointerEvent) {
 	let ev = this, type = ev.type as TargetEvents;
 	func[apply_](ev);
-	if(targetEvents.has(type)) processOut(ev);
 	if(targetOnOutEvents.has(on_ + type as any)) ev[stop_].push(ev[target_] as HTMLElement);
 };
 

@@ -22,7 +22,7 @@ let terserOption = {
 };
 
 let project = ts.createProject("tsconfig.json");
-gulp.task('build', () =>
+gulp.task('default', () =>
 	project.src()
 		.pipe(project())
 		.pipe(gulp.dest("test"))

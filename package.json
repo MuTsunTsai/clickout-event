@@ -4,7 +4,7 @@
 	"description": "Provides universal support for `clickout` and other similar events to webpages.",
 	"main": "dist/clickout-event.js",
 	"scripts": {
-		"version": "gulp build && git add -A",
+		"version": "gulp default && git add -A",
 		"test": "echo \"Error: no test specified\""
 	},
 	"keywords": [
@@ -21,10 +21,10 @@
 	"license": "MIT",
 	"devDependencies": {
 		"gulp": "^4.0.2",
-		"gulp-terser": "^1.3.2",
+		"gulp-terser": "^1.4.1",
 		"gulp-typescript": "^6.0.0-alpha.1",
 		"gulp-wrap-js": "^0.4.1",
-		"typescript": "^3.9.7"
+		"typescript": "^4.2.4"
 	},
 	"files": [
 		"dist"

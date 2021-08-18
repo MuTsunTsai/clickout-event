@@ -34,26 +34,30 @@ so it will not work directly for legacy browsers.
 You may try using polyfills to make it work,
 but I haven't tested those yet.
 
-## Install
+## Install (with module)
 
 You can get Clickout-Event as an NPM package by running:
 ```bash
 npm install clickout-event --save
 ```
-Or, simply download [`clickout-event.js`](https://github.com/MuTsunTsai/clickout-event/raw/master/dist/clickout-event.js).
-Then all you need to do is add the script tag anywhere (as long as it is before any calling of the `addEventListener` method) in your webpage :
+Then add one of the following lines to your entry script:
+
+```js
+require('clickout-event');
+// or
+import 'clickout-event';
+```
+
+And watch the magic happen.
+
+## Install (without module)
+
+Simply download [`clickout-event.js`](https://github.com/MuTsunTsai/clickout-event/raw/master/dist/clickout-event.js).
+Then all you need to do is add the script tag anywhere (as long as it is before any calling of the `addEventListener` method, such as the beginning of the `<head>` section) in your HTML file:
 
 ```html
 <script src="clickout-event.js"></script>
 ```
-
-If you use webpack, you'll need to `require()` the module for things to work.
-
-```js
-require('clickout-event');
-```
-
-And watch the magic happen.
 
 ## API
 

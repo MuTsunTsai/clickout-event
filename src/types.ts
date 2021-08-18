@@ -4,10 +4,7 @@ type TargetTouchEvents = 'touchstart' | 'touchend';
 type TargetPointerEvents = 'pointerdown' | 'pointerup';
 type TargetEvents = TargetMouseEvents | TargetTouchEvents | TargetPointerEvents;
 
-type TargetOnMouseOutEvents = 'onclickout' | 'ondblclickout' | 'onmousedownout' | 'onmouseupout';
-type TargetOnTouchOutEvents = 'ontouchstartout' | 'ontouchendout';
-type TargetOnPointerOutEvents = 'onpointerdownout' | 'onpointerupout';
-type TargetOnOutEvents = TargetOnMouseOutEvents | TargetOnTouchOutEvents | TargetOnPointerOutEvents;
+type TargetOnOutEvents = `on${TargetEvents}out`;
 
 type GlobalOutEventHandlers = { [e in TargetOnOutEvents]: EventListener };
 

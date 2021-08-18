@@ -41,10 +41,10 @@ const checkRecursive = (el) => {
         }
         else {
             each(targetEvents, e => {
-                let oneout = on_ + e + out_;
-                let attr = el.getAttribute(oneout);
-                if (attr && !manager(el)[oneout])
-                    el[setAttribute_](oneout, attr);
+                let onEventOut = on_ + e + out_;
+                let attr = el.getAttribute(onEventOut);
+                if (attr && !manager(el)[onEventOut])
+                    el[setAttribute_](onEventOut, attr);
             });
         }
         each(el.childNodes, checkRecursive);
@@ -88,8 +88,6 @@ const processOut = (event) => {
 const eventPatchFactory = (func) => function () {
     let ev = this, type = ev.type;
     func[apply_](ev);
-    if (targetEvents.has(type))
-        processOut(ev);
     if (targetOnOutEvents.has(on_ + type))
         ev[stop_].push(ev[target_]);
 };
@@ -104,13 +102,16 @@ let outList = [];
 let sortNeeded = false;
 let virtual = document_.createElement(body_);
 each(targetEvents, event => {
-    document_[addEventListener_](event, processOut, { passive: true });
-    let oneout = on_ + event + out_;
-    Object_.defineProperty(HTMLElementPrototype, oneout, {
-        get() { return this[outSymbol][oneout]; },
+    document_[addEventListener_](event, processOut, {
+        passive: true,
+        capture: true
+    });
+    let onEventOut = on_ + event + out_;
+    Object_.defineProperty(HTMLElementPrototype, onEventOut, {
+        get() { return this[outSymbol][onEventOut]; },
         set(value) {
             this[addEventListener_](event + out_, attributeListener);
-            this[outSymbol][oneout] = typeof value == "object" ? value.handleEvent : value;
+            this[outSymbol][onEventOut] = typeof value == "object" ? value.handleEvent : value;
         }
     });
 });
