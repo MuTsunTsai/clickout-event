@@ -20,8 +20,7 @@ const HTMLElement_ = HTMLElement;
 const HTMLElementPrototype = HTMLElement_[prototype_];
 const EventPrototype = Event[prototype_];
 const events = [
-    click_,
-    'dbl' + click_,
+    click_, 'dbl' + click_,
     'mousedown', 'mouseup',
     'touchstart', 'touchend',
     'pointerdown', 'pointerup'

@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "es6",
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"strict": true,
 		"removeComments": true,
 		"outFile": "clickout-event.js"
