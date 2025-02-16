@@ -1,5 +1,5 @@
 /**
- * clickout-event v1.1.2
+ * clickout-event v1.1.3
  * (c) 2020-2025 Mu-Tsun Tsai
  * Released under the MIT License.
  */
