@@ -1,16 +1,16 @@
-let gulp = require('gulp');
-let ts = require('gulp-typescript');
-let wrapJS = require("gulp-wrap-js");
-let terser = require('gulp-terser');
+const gulp = require('gulp');
+const ts = require('gulp-typescript');
+const through2 = require("gulp-through2");
+const terser = require('gulp-terser');
 
-let pkg = require('./package.json');
-let header = `/**
+const pkg = require('./package.json');
+const header = `/**
  * ${pkg.name} v${pkg.version}
  * (c) 2020-${new Date().getFullYear()} Mu-Tsun Tsai
  * Released under the MIT License.
  */`;
 
-let terserOption = {
+const terserOption = {
 	"compress": {
 		"evaluate": false,
 		"properties": false,
@@ -21,12 +21,12 @@ let terserOption = {
 	}
 };
 
-let project = ts.createProject("tsconfig.json");
+const project = ts.createProject("tsconfig.json");
 gulp.task('default', () =>
 	project.src()
 		.pipe(project())
 		.pipe(gulp.dest("test"))
-		.pipe(wrapJS(`${header};(function(){ %= body % })()`))
+		.pipe(through2(body => `${header};(function(){ ${body} })()`))
 		.pipe(terser(terserOption))
 		.pipe(gulp.dest("dist"))
 );
