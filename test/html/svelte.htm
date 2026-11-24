@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Svelte 5 Test</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		div:not(#app) {
+			padding: 10px;
+			margin: 10px;
+		}
+	</style>
+	<script src="clickout-event.js"></script>
+	<script type="importmap">
+		{
+			"imports": {
+				"svelte": "https://esm.sh/svelte@5",
+				"svelte/": "https://esm.sh/svelte@5/"
+			}
+		}
+	</script>
+</head>
+
+<body>
+	<div id="app"></div>
+	<script type="module">
+		import { mount } from "svelte";
+		import { compile } from "svelte/compiler";
+
+		const source = `
+			<script>
+				function set(event) {
+					let el = event.target;
+					el.innerText = event.type;
+					setTimeout(() => el.innerHTML = "&nbsp;", 500);
+				}
+			<\/script>
+
+			<div style="background:blue;" onclickout={set}>&nbsp;</div>
+			<div style="background:red;" onmousedownout={set}>&nbsp;</div>
+			<div style="background:yellow;" onmouseupout={set}>&nbsp;</div>
+			<div style="background:green;" onpointerupout={set}>&nbsp;</div>
+		`;
+
+		// Compile the component in the browser, and load it as a module.
+		const { js } = compile(source, { generate: "client" });
+		const url = URL.createObjectURL(new Blob([js.code], { type: "text/javascript" }));
+		const { default: App } = await import(url);
+
+		mount(App, { target: document.getElementById("app") });
+	</script>
+</body>
+
+</html>

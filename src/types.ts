@@ -1,18 +1,19 @@
+export type TargetMouseEvents = 'click' | 'dblclick' | 'mousedown' | 'mouseup';
+export type TargetTouchEvents = 'touchstart' | 'touchend';
+export type TargetPointerEvents = 'pointerdown' | 'pointerup';
+export type TargetEvents = TargetMouseEvents | TargetTouchEvents | TargetPointerEvents;
 
-type TargetMouseEvents = 'click' | 'dblclick' | 'mousedown' | 'mouseup';
-type TargetTouchEvents = 'touchstart' | 'touchend';
-type TargetPointerEvents = 'pointerdown' | 'pointerup';
-type TargetEvents = TargetMouseEvents | TargetTouchEvents | TargetPointerEvents;
+export type TargetOnOutEvents = `on${TargetEvents}out`;
 
-type TargetOnOutEvents = `on${TargetEvents}out`;
-
-type GlobalOutEventHandlers = { [e in TargetOnOutEvents]: EventListener };
+export type GlobalOutEventHandlers = { [e in TargetOnOutEvents]: EventListener };
 
 interface OutEvent {
 	stop: HTMLElement[];
 }
 
-interface MouseEvent extends OutEvent { }
-interface TouchEvent extends OutEvent {
-	relatedTarget: EventTarget;
+declare global {
+	interface MouseEvent extends OutEvent { }
+	interface TouchEvent extends OutEvent {
+		relatedTarget: EventTarget;
+	}
 }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>React Test</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		div:not(#app) {
+			padding: 10px;
+			margin: 10px;
+		}
+	</style>
+	<script src="clickout-event.js"></script>
+	<script type="importmap">
+		{
+			"imports": {
+				"react": "https://esm.sh/react@19",
+				"react-dom/client": "https://esm.sh/react-dom@19/client"
+			}
+		}
+	</script>
+</head>
+
+<body>
+	<div id="app"></div>
+	<script type="module">
+		import { createElement as h, useLayoutEffect, useRef } from "react";
+		import { createRoot } from "react-dom/client";
+
+		function set(event) {
+			let el = event.target;
+			el.innerText = event.type;
+			setTimeout(() => el.innerHTML = "&nbsp;", 500);
+		}
+
+		// React only supports a fixed list of events in its props,
+		// so out-events have to be registered with addEventListener.
+		function Block({ color, event }) {
+			const ref = useRef(null);
+			// useLayoutEffect registers the listener before the browser paints.
+			useLayoutEffect(() => {
+				const el = ref.current;
+				el.addEventListener(event, set);
+				return () => el.removeEventListener(event, set);
+			}, [event]);
+			return h("div", { ref, style: { background: color } }, " ");
+		}
+
+		createRoot(document.getElementById("app")).render([
+			h(Block, { key: "b", color: "blue", event: "clickout" }),
+			h(Block, { key: "r", color: "red", event: "mousedownout" }),
+			h(Block, { key: "y", color: "yellow", event: "mouseupout" }),
+			h(Block, { key: "g", color: "green", event: "pointerupout" }),
+		]);
+	</script>
+</body>
+
+</html>

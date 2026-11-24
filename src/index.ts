@@ -1,12 +1,13 @@
-/// <reference path="functions.ts" />
+import {
+	EventPrototype, HTMLElementPrototype, HTMLElement_, Object_, Propagation_, addEventListener_,
+	apply_, body_, click_, document_, each, is, on_, out_, outSymbol, setAttribute_, stop_,
+	targetEvents, targetOnOutEvents,
+} from "./shorthands";
+import {
+	addElement, attributeListener, checkRecursive, eventPatchFactory, patch, processOut, removeElements,
+} from "./functions";
 
-/**
- * Keeps a list of all OutElements that are currently in the DOM,
- * ordered from top level element to deeper level elements.
- */
-let outList: HTMLElement[] = [];
-
-let sortNeeded = false;
+import type { TargetOnOutEvents } from "./types";
 
 /**
  * Create a virtual element for parsing inline event attribute.
@@ -33,10 +34,11 @@ each(targetEvents, event => {
 	let onEventOut = on_ + event + out_ as TargetOnOutEvents;
 	Object_.defineProperty(HTMLElementPrototype, onEventOut, {
 		get(this: HTMLElement) { return this[outSymbol][onEventOut]; },
-		set(this: HTMLElement, value: EventListenerOrEventListenerObject) {
+		set(this: HTMLElement, value: EventListenerOrEventListenerObject | null) {
 			// Registering duplicate listener has no effect.
 			this[addEventListener_](event + out_, attributeListener);
-			this[outSymbol][onEventOut] = typeof value == "object" ? value.handleEvent : value;
+			// Setting null clears the listener, like native on-event handlers.
+			this[outSymbol][onEventOut] = value && typeof value == "object" ? value.handleEvent : value!;
 		}
 	});
 });
@@ -71,9 +73,7 @@ new MutationObserver((list: MutationRecord[]) => {
 	each(list, record => {
 		each(record.addedNodes, checkRecursive);
 		each(record.removedNodes, n => {
-			if(is(n, HTMLElement_)) {
-				outList = outList.filter(c => !contains(n, c));
-			}
+			if(is(n, HTMLElement_)) removeElements(n);
 		});
 	});
 }).observe(document_.documentElement, {

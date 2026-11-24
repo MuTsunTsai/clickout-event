@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Alpine.js Test</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		div:not(#app) {
+			padding: 10px;
+			margin: 10px;
+		}
+	</style>
+	<script src="clickout-event.js"></script>
+	<script defer src="https://unpkg.com/alpinejs@3/dist/cdn.min.js"></script>
+</head>
+
+<body>
+	<div id="app" x-data="{ set(event) {
+		let el = event.target;
+		el.innerText = event.type;
+		setTimeout(() => el.innerHTML = '&nbsp;', 500);
+	} }">
+		<div style="background:blue;" @clickout="set($event)">&nbsp;</div>
+		<div style="background:red;" @mousedownout="set($event)">&nbsp;</div>
+		<div style="background:yellow;" @mouseupout="set($event)">&nbsp;</div>
+		<div style="background:green;" @pointerupout="set($event)">&nbsp;</div>
+	</div>
+</body>
+
+</html>

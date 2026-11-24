@@ -1,6 +1,19 @@
-/// <reference path="shorthands.ts" />
+import {
+	HTMLElement_, Object_, TouchEvent_, apply_, contains, each, is, on_, out_,
+	outSymbol, relatedTarget_, setAttribute_, stop_, target_, targetEvents, targetOnOutEvents,
+} from "./shorthands";
 
-const checkRecursive = (el: Node) => {
+import type { TargetEvents, TargetOnOutEvents } from "./types";
+
+/**
+ * Keeps a list of all OutElements that are currently in the DOM,
+ * ordered from top level element to deeper level elements.
+ */
+let outList: HTMLElement[] = [];
+
+let sortNeeded = false;
+
+export const checkRecursive = (el: Node) => {
 	if(is(el, HTMLElement_)) {
 		if(el[outSymbol]) {
 			// Reattachment of an OutElement.
@@ -22,11 +35,16 @@ const checkRecursive = (el: Node) => {
 
 const manager = (el: HTMLElement) => el[outSymbol] = el[outSymbol] || {};
 
-const addElement = (el: HTMLElement) => {
+export const addElement = (el: HTMLElement) => {
 	manager(el);
 	if(outList.includes(el)) return;
 	outList.push(el);
 	sortNeeded = true;
+};
+
+/** Removes all OutElements under the given node. */
+export const removeElements = (n: Node) => {
+	outList = outList.filter(c => !contains(n, c));
 };
 
 const elementSort = (e1: Node, e2: Node) => {
@@ -35,12 +53,14 @@ const elementSort = (e1: Node, e2: Node) => {
 	return 0;
 };
 
-const processOut = (event: TouchEvent | PointerEvent) => {
+export const processOut = (event: TouchEvent | PointerEvent) => {
 	if(sortNeeded) {
 		outList.sort(elementSort);
 		sortNeeded = false;
 	}
-	let target = event[target_] as Node;
+	// event.target is retargeted to the shadow host if the actual target is inside a shadow tree,
+	// so we use the composed path to find the actual target.
+	let target = event.composedPath()[0] as Node;
 
 	// TouchEvent does not have 'relatedTarget' property and have to be handled separately.
 	if(is(event, TouchEvent_)) {
@@ -61,16 +81,16 @@ const processOut = (event: TouchEvent | PointerEvent) => {
 	});
 };
 
-const eventPatchFactory = (func: Function) => function(this: TouchEvent | PointerEvent) {
+export const eventPatchFactory = (func: Function) => function(this: TouchEvent | PointerEvent) {
 	let ev = this, type = ev.type as TargetEvents;
 	func[apply_](ev);
 	if(targetOnOutEvents.has(on_ + type as any)) ev[stop_].push(ev[target_] as HTMLElement);
 };
 
-const patch = <T, K extends keyof T>(proto: T, method: K, factory: (org: T[K]) => T[K]) =>
+export const patch = <T, K extends keyof T>(proto: T, method: K, factory: (org: T[K]) => T[K]) =>
 	proto[method] = factory(proto[method]);
 
-function attributeListener(this: HTMLElement, event: Event) {
+export function attributeListener(this: HTMLElement, event: Event) {
 	let listener = this[outSymbol][on_ + event.type as TargetOnOutEvents];
 	if(listener) listener[apply_](this, [event]);
 };

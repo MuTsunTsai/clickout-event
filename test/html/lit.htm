@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Lit Test</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="clickout-event.js"></script>
+</head>
+
+<body>
+	<test-blocks></test-blocks>
+	<script type="module">
+		import { LitElement, css, html } from "https://esm.sh/lit@3";
+
+		function set(event) {
+			let el = event.target;
+			el.innerText = event.type;
+			setTimeout(() => el.innerHTML = "&nbsp;", 500);
+		}
+
+		// The blocks are rendered inside the shadow DOM of the component.
+		customElements.define("test-blocks", class extends LitElement {
+			static styles = css`
+				div {
+					padding: 10px;
+					margin: 10px;
+				}
+			`;
+
+			render() {
+				return html`
+					<div style="background:blue;" @clickout=${set}> </div>
+					<div style="background:red;" @mousedownout=${set}> </div>
+					<div style="background:yellow;" @mouseupout=${set}> </div>
+					<div style="background:green;" @pointerupout=${set}> </div>
+				`;
+			}
+		});
+	</script>
+</body>
+
+</html>

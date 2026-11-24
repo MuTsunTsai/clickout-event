@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Angular Test</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		app-root div {
+			padding: 10px;
+			margin: 10px;
+		}
+	</style>
+	<script src="clickout-event.js"></script>
+	<script type="importmap">
+		{
+			"imports": {
+				"@angular/compiler": "https://esm.sh/@angular/compiler@22",
+				"@angular/core": "https://esm.sh/@angular/core@22",
+				"@angular/platform-browser": "https://esm.sh/@angular/platform-browser@22"
+			}
+		}
+	</script>
+</head>
+
+<body>
+	<app-root></app-root>
+	<script type="module">
+		// Use the JIT compiler so that the component can be compiled in the browser.
+		import "@angular/compiler";
+		import { Component, provideZonelessChangeDetection } from "@angular/core";
+		import { bootstrapApplication } from "@angular/platform-browser";
+
+		// Equivalent to using the @Component decorator.
+		const App = Component({
+			selector: "app-root",
+			template: `
+				<div style="background:blue;" (clickout)="set($event)">&nbsp;</div>
+				<div style="background:red;" (mousedownout)="set($event)">&nbsp;</div>
+				<div style="background:yellow;" (mouseupout)="set($event)">&nbsp;</div>
+				<div style="background:green;" (pointerupout)="set($event)">&nbsp;</div>
+			`,
+		})(class {
+			set(event) {
+				let el = event.target;
+				el.innerText = event.type;
+				setTimeout(() => el.innerHTML = "&nbsp;", 500);
+			}
+		});
+
+		bootstrapApplication(App, { providers: [provideZonelessChangeDetection()] });
+	</script>
+</body>
+
+</html>

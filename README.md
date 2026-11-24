@@ -87,7 +87,7 @@ document.getElementById('myId').addEventListener('clickout', myListener);
 $('#myId').on('clickout', myListener);
 ```
 
-### [Vue.js](https://vuejs.org/)
+### [Vue.js](https://vuejs.org/) (both v2 and v3)
 
 ```html
 <div v-on:clickout="open=false">...</div>
@@ -100,6 +100,16 @@ $('#myId').on('clickout', myListener);
 ```
 
 ### Other frameworks
+
+Clickout-Event is also tested with the following frameworks,
+where out-events can be used directly with their event binding syntax:
+
+| Framework | Syntax |
+| --- | --- |
+| [Preact](https://preactjs.com/) | `<div onclickout={close}>` |
+| [Svelte](https://svelte.dev/) 5 | `<div onclickout={close}>` |
+| [Alpine.js](https://alpinejs.dev/) | `<div @clickout="open = false">` |
+| [Lit](https://lit.dev/) | `` html`<div @clickout=${this.close}>` `` |
 
 Some frameworks (such as [React](https://reactjs.org/) and [Blazor](https://blazor.net/))
 have a fixed list of events that are supported by their event attribute syntax,
@@ -129,6 +139,17 @@ Feel free to add or remove elements dynamically!
 Clickout-Event monitors changes to the document,
 and will ensure the out-events work no matter which dynamic
 front-end framework you're using.
+
+### Shadow DOM
+
+Shadow DOM is supported as well,
+so out-events work in Web Components and frameworks based on them (such as [Lit](https://lit.dev/)).
+Clicking inside a shadow tree counts as clicking inside its shadow host and all of the host's ancestors,
+and `event.relatedTarget` is retargeted following the native rules.
+
+Note that this applies to open shadow roots only.
+Also, inline out-event attributes (such as `onclickout="..."`) inside shadow trees are not detected automatically;
+use `addEventListener()` or your framework's event binding syntax instead.
 
 ### Content Security Policy (CSP)
 
