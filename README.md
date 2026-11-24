@@ -2,10 +2,10 @@
 
 > Provides universal support for `clickout` and other similar events to any front-end frameworks.
 
-[![npm version](https://img.shields.io/npm/v/clickout-event.svg?logo=npm)](https://www.npmjs.com/package/clickout-event)
-![npm downloads](https://img.shields.io/npm/dt/clickout-event?logo=npm)
-[![GitHub package version](https://img.shields.io/github/package-json/v/MuTsunTsai/clickout-event.svg?logo=github&label=Github)](https://github.com/MuTsunTsai/clickout-event)
-![license](https://img.shields.io/npm/l/clickout-event.svg)
+[![npm version](https://img.shields.io/npm/v/clickout-event?logo=npm)](https://www.npmjs.com/package/clickout-event)
+[![npm downloads](https://img.shields.io/npm/d18m/clickout-event?logo=npm)](https://www.npmjs.com/package/clickout-event)
+[![GitHub package version](https://img.shields.io/github/package-json/v/MuTsunTsai/clickout-event?logo=github&label=GitHub)](https://github.com/MuTsunTsai/clickout-event)
+[![license](https://img.shields.io/npm/l/clickout-event)](LICENSE)
 
 
 There are many packages that are designed to capture and handle the
